@@ -3,55 +3,76 @@ const getComputerChoice = function () {
   let randomNum = Math.floor(Math.random() * noOfChoices)
 
   // below r = rock, p = paper and s = scissors
-  return randomNum === 0 ? 'r' : randomNum === 1 ? 'p' : 's'
-}
-
-const getHumanChoice = function () {
-  userChoice = prompt('Type your choice, rock = r | paper = p | scissors = s')
-  return userChoice
+  return randomNum === 0 ? 'rock' : randomNum === 1 ? 'paper' : 'scissors'
 }
 
 const playGame = function () {
   let humanScore = 0
   let computerScore = 0
-  let rounds = 5
-  const playGround = function (humanChoice, computerChoice) {
-    // console.log(humanChoice, computerChoice);
+
+  const playRound = function (humanChoice, computerChoice) {
+    //game stats section
+    const section = document.querySelector('.result')
+    const message = document.createElement('p')
     humanChoice = humanChoice.toLowerCase()
 
     if (humanChoice == computerChoice) {
-      return alert("It's a tie")
+      message.textContent = "It's a tie!"
+      section.appendChild(message)
+      return
     }
 
     if (
-      (humanChoice == 'r' && computerChoice == 's') ||
-      (humanChoice == 'p' && computerChoice == 'r') ||
-      (humanChoice == 's' && computerChoice == 'p')
+      (humanChoice == 'rock' && computerChoice == 'scissors') ||
+      (humanChoice == 'paper' && computerChoice == 'rock') ||
+      (humanChoice == 'scissors' && computerChoice == 'paper')
     ) {
       humanScore += 1
-      return alert(`player wins! ${humanChoice} beats ${computerChoice}`)
+      message.textContent = `player wins! ${humanChoice} beats ${computerChoice} 
+      \nPlayer: ${humanScore} | Computer: ${computerScore}`
+      message.style.whiteSpace = 'pre-line'
+      section.appendChild(message)
     } else {
       computerScore += 1
-      return alert(`Computer wins! ${computerChoice} beats ${humanChoice}`)
+      message.textContent = `Computer wins! ${computerChoice} beats ${humanChoice} 
+      \nPlayer: ${humanScore} | Computer: ${computerScore}`
+      message.style.whiteSpace = 'pre-line'
+      section.appendChild(message)
+    }
+
+    if (humanScore === 5 || computerScore === 5) {
+      checkGameWinner(humanScore, computerScore, section)
+      humanScore = 0
+      computerScore = 0
+      section.textContent = ''
     }
   }
 
-  for (let i = 0; i < rounds; i++) {
-    const computerSelection = getComputerChoice()
-    const humanSelection = getHumanChoice()
-    playGround(humanSelection, computerSelection)
+  const checkGameWinner = function (humanScore, computerScore, section) {
+    if (humanScore > computerScore) {
+      return alert(
+        `player wins! player: ${humanScore} | computer: ${computerScore}`
+      )
+    } else if (humanScore < computerScore) {
+      return alert(
+        `computer wins! computer: ${computerScore} | player: ${humanScore} `
+      )
+    }
   }
-  if (humanScore > computerScore) {
-    return alert(
-      `player wins! player: ${humanScore} | computer: ${computerScore}`
-    )
-  } else if (humanScore < computerScore) {
-    return alert(
-      `compuer wins! player: ${humanScore} | computer: ${computerScore}`
-    )
-  } else {
-    return alert("It's a tie")
-  }
+
+  //buttons
+
+  const buttons = document.querySelectorAll('.btn')
+
+  buttons.forEach((button) => {
+    button.addEventListener('click', (e) => {
+      let humanChoice = e.target.textContent
+      let computerChoice = getComputerChoice()
+      playRound(humanChoice, computerChoice)
+    })
+  })
+
+  // results section
 }
 
 playGame()
